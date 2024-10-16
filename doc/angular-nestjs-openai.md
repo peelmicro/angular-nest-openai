@@ -451,7 +451,7 @@ CREATE src/environments/environment.development.ts (31 bytes)
 UPDATE angular.json (3496 bytes)
 ```
 
-### 3.3. Installing `TailwindCSS` with `Angular`
+### 3.2.3. Installing `TailwindCSS` with `Angular`
 
 - We are going to install `TailwindCSS` with `Angular` by following the instructions in [TailwindCSS: Angular](https://tailwindcss.com/docs/guides/angular).
 
@@ -533,5 +533,214 @@ NOTE: Raw file sizes do not reflect development server per-request transformatio
 
 ![First version with TailwindCSS](angular-nestjs-openai-005.png)
 
+### 3.2.4 Creating the main pages
+
+#### 3.2.4.1 Creating the `layout` component
+
+- We are going to create the `layout` component by using `Angular Schematics: Generate a file from VSCode`.
+
+![Using Angular Schematics](angular-nestjs-openai-006.png)
+
+- We select `Component`
+
+![Select Component](angular-nestjs-openai-007.png)
 
 
+- Put `dashboard-layer` as the name of the component
+
+![Name it dashboard-layer](angular-nestjs-openai-008.png)
+
+- We need to import the `CommonModule` in the `dashboard-layer.module.ts` file.
+
+![Import CommonModule](angular-nestjs-openai-009.png)
+
+- We are going to set up a configuration for components in the future. We need to select `Advanced options`
+
+![Advanced options](angular-nestjs-openai-010.png)
+
+- We need to check the `externalTemplate` option.
+
+![selected externalTemplate](angular-nestjs-openai-011.png)
+
+- We are going to select `Enable, and set as feault for this workspace folder`.
+
+![Enables as default](angular-nestjs-openai-012.png)
+
+- We need to `Confirm` the changes.
+
+![Confirm setup](angular-nestjs-openai-013.png)
+
+- It has generated the `dashboard-layer` component.
+
+```bash
+Generation result:
+Destination path: web/src/app/presentation/layouts/dashboard-layer
+File name: dashboard-layer.component
+Schematic: Component (Angular)
+Options: --style css --imports CommonModule:@angular/common --externalTemplate
+CREATE web/src/app/presentation/layouts/dashboard-layer/dashboard-layer.component.ts
+CREATE web/src/app/presentation/layouts/dashboard-layer/dashboard-layer.component.html
+CREATE web/src/app/presentation/layouts/dashboard-layer/dashboard-layer.component.css
+UPDATE web/src/app/presentation/layouts/dashboard-layer/dashboard-layer.component.ts
+```
+
+> web/src/app/presentation/layouts/dashboard-layer/dashboard-layer.component.ts
+```typescript
+import { CommonModule } from "@angular/common";
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+@Component({
+    selector: 'app-dashboard-layer',
+    standalone: true,
+    imports: [
+        CommonModule,
+    ],
+    templateUrl: './dashboard-layer.component.html',
+    styleUrl: './dashboard-layer.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class DashboardLayerComponent { }
+```
+
+> Note: `changeDetection: ChangeDetectionStrategy.OnPush` is used when we use `Signals`.
+> `CommonModule` is used to use the `ngIf` and `ngFor` directives.
+
+- We are going to use `Angular Schematic` to create the `pages components`.
+
+1. web/src/app/presentation/pages/assistant-page/assistant-page.component.ts
+2. web/src/app/presentation/pages/audio-to-text-page/audio-to-text-page.component.ts
+3. web/src/app/presentation/pages/image-generation-page/image-generation-page.component.ts
+4. web/src/app/presentation/pages/image-tunning-page/image-tunning-page.component.ts
+5. web/src/app/presentation/pages/orthography-page/orthography-page.component.ts
+6. web/src/app/presentation/pages/pros-cons-page/pros-cons-page.component.ts
+7. web/src/app/presentation/pages/pros-cons-stream-page/pros-cons-stream-page.component.ts
+8. web/src/app/presentation/pages/text-to-audio-page/text-to-audio-page.component.ts
+9. web/src/app/presentation/pages/translate-page/translate-page.component.ts
+
+### 3.2.5 Creating the `Routes` for the main pages
+
+- We need to update the `app.routes.ts` file to include the routes for the main pages.
+- We can copy the content from the resource file.
+
+> web/src/app/app.routes.ts
+```typescript
+import { Routes } from '@angular/router';
+import { DashboardLayoutComponent } from './presentation/layouts/dashboard-layout/dashboard-layout.component';
+
+export const routes: Routes = [
+  {
+    path: '',
+    component: DashboardLayoutComponent,
+    children: [
+      {
+        path: 'orthography',
+        loadComponent: () =>
+          import(
+            './presentation/pages/orthography-page/orthography-page.component'
+          ),
+        data: {
+          icon: 'fa-solid fa-spell-check',
+          title: 'Ortografía',
+          description: 'Corregir ortografía',
+        },
+      },
+      {
+        path: 'pros-cons',
+        loadComponent: () =>
+          import('./presentation/pages/pros-cons-page/pros-cons-page.component'),
+        data: {
+          icon: 'fa-solid fa-code-compare',
+          title: 'Pros & Cons',
+          description: 'Comparar pros y contras',
+        },
+      },
+      {
+        path: 'pros-cons-stream',
+        loadComponent: () =>
+          import(
+            './presentation/pages/pros-cons-stream-page/pros-cons-stream-page.component'
+          ),
+        data: {
+          icon: 'fa-solid fa-water',
+          title: 'Como stream',
+          description: 'Con stream de mensajes',
+        },
+      },
+      {
+        path: 'translate',
+        loadComponent: () =>
+          import('./presentation/pages/translate-page/translate-page.component'),
+        data: {
+          icon: 'fa-solid fa-language',
+          title: 'Traducir',
+          description: 'Textos a otros idiomas',
+        },
+      },
+      {
+        path: 'text-to-audio',
+        loadComponent: () =>
+          import(
+            './presentation/pages/text-to-audio-page/text-to-audio-page.component'
+          ),
+        data: {
+          icon: 'fa-solid fa-podcast',
+          title: 'Texto a audio',
+          description: 'Convertir texto a audio',
+        },
+      },
+      {
+        path: 'audio-to-text',
+        loadComponent: () =>
+          import(
+            './presentation/pages/audio-to-text-page/audio-to-text-page.component'
+          ),
+        data: {
+          icon: 'fa-solid fa-comment-dots',
+          title: 'Audio a texto',
+          description: 'Convertir audio a texto',
+        },
+      },
+      {
+        path: 'image-generation',
+        loadComponent: () =>
+          import(
+            './presentation/pages/image-generation-page/image-generation-page.component'
+          ),
+        data: {
+          icon: 'fa-solid fa-image',
+          title: 'Imágenes',
+          description: 'Generar imágenes',
+        },
+      },
+      {
+        path: 'image-tunning',
+        loadComponent: () =>
+          import(
+            './presentation/pages/image-tunning-page/image-tunning-page.component'
+          ),
+        data: {
+          icon: 'fa-solid fa-wand-magic',
+          title: 'Editar imagen',
+          description: 'Generación continua',
+        },
+      },
+
+      {
+        path: 'assistant',
+        loadComponent: () =>
+          import('./presentation/pages/assistant-page/assistant-page.component'),
+        data: {
+          icon: 'fa-solid fa-user',
+          title: 'Asistente',
+          description: 'Información del asistente',
+        },
+      },
+      {
+        path: '**',
+        redirectTo: 'orthography',
+        pathMatch: 'full',
+      },
+    ],
+  },
+];
+```
