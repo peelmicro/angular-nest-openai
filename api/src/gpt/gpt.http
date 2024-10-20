@@ -1,0 +1,10 @@
+## Local url
+@url = http://localhost:3000/gpt
+
+### Create a new payment intent
+POST {{url}}/orthography-check
+content-type: application/json
+
+{
+  "prompt": "Las casa son mui bonitas"
+}
