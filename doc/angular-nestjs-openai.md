@@ -744,3 +744,396 @@ export const routes: Routes = [
   },
 ];
 ```
+
+## 4.- Setting Up the API NestJS Project with OpenAI
+
+### 4.1 Updating the API NestJS project
+
+#### 4.1.1 Installing the `class-validator` and `class-transformer` packages
+
+- We are going to install the `class-validator` and `class-transformer` packages to validate the data that the user sends to the API.
+
+```bash
+yarn add class-validator class-transformer
+➤ YN0000: · Yarn 4.5.0
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + class-transformer@npm:0.5.1, class-validator@npm:0.14.1, @types/validator@npm:13.12.2, libphonenumber-js@npm:1.11.12, and 1 more.
+➤ YN0000: └ Completed in 0s 403ms
+➤ YN0000: ┌ Post-resolution validation
+➤ YN0002: │ api@workspace:. doesn't provide webpack (pee0a8), requested by ts-loader.
+➤ YN0086: │ Some peer dependencies are incorrectly met by your project; run yarn explain peer-requirements <hash> for details, where <hash> is the six-letter p-prefixed code.
+➤ YN0086: │ Some peer dependencies are incorrectly met by dependencies; run yarn explain peer-requirements for details.
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0013: │ 2 packages were added to the project (+ 8.18 MiB).
+➤ YN0000: └ Completed in 0s 544ms
+➤ YN0000: ┌ Link step
+➤ YN0008: │ @nestjs/core@npm:10.4.4 [7473a] must be rebuilt because its dependency tree changed
+➤ YN0000: └ Completed in 0s 982ms
+➤ YN0000: · Done with warnings in 2s 77ms
+```
+
+#### 4.1.2 Modifying the `main.ts` file
+
+- We need to enable `CORS` in the `NestJS` API to allow the `Angular` project to make requests to the API.
+
+- This is the current version of "main.ts" file:
+
+> api/src/main.ts
+```typescript
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );  
+  app.enableCors();
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`Listening on port ${port}!`);
+  });  
+}
+bootstrap();
+```
+
+#### 4.1.3 Creating the `OpenAI` service
+
+- We are going to create the `OpenAI` service to interact with the `OpenAI` API.
+
+```bash
+nest g res gpt
+? What transport layer do you use? REST API
+? Would you like to generate CRUD entry points? No
+CREATE src/gpt/gpt.controller.spec.ts (546 bytes)
+CREATE src/gpt/gpt.controller.ts (198 bytes)
+CREATE src/gpt/gpt.module.ts (234 bytes)
+CREATE src/gpt/gpt.service.spec.ts (439 bytes)
+CREATE src/gpt/gpt.service.ts (87 bytes)
+UPDATE package.json (2078 bytes)
+UPDATE src/app.module.ts (304 bytes)
+✔ Packages installed successfully.
+```
+
+- It creates the `gpt` module, controller, and service.
+
+#### 4.1.4 Obtaining the `OpenAI` API key
+
+- We need to authenticate with [OpenAI](https://platform.openai.com/) and clicking on the `Login` button.
+- We need to obtain the `OpenAI` API key by following the instructions in [OpenAI: API Key](https://platform.openai.com/api-keys), by clicking on the `+Create New Secret Key` button.
+
+
+![+Create New Secret Key](angular-nestjs-openai-014.png)
+
+- We need to put `angular-nestjs-openai` as the name of the key and the click the `Create Secret Key` button.
+
+![Create Secret Key](angular-nestjs-openai-015.png)
+
+- We need to copy the `API Key` and save it in a safe place. Then, we need to close the dialog by clicking the `Done` button.
+
+![Save your Key](angular-nestjs-openai-016.png)
+
+- We can see the `API Key` in the `OpenAI` dashboard.
+
+![API Keys](angular-nestjs-openai-017.png)
+
+- We need to set up billing to use the `OpenAI` API. We need to go to [OpenAI Playground](https://platform.openai.com/playground/) and click on the `Finish Account Setup -->` button. 
+
+![Finish Account Setup](angular-nestjs-openai-018.png)
+
+- We need to click on the `Add payment details` button and fill in the form with the payment details.
+
+![Add payment details](angular-nestjs-openai-019.png)
+
+- We need to select the `Individual` option.
+
+![Select Individual](angular-nestjs-openai-020.png)
+
+- We need to fill in the form with the payment details.
+
+![Payment Details](angular-nestjs-openai-021.png)
+
+- We need to add an initial credit purchase and other values if we want to.
+
+![Initial Credit](angular-nestjs-openai-022.png)
+
+- We need to confirm the payment by clicking the `Confirm payment` button.
+
+![Confirm Payment](angular-nestjs-openai-023.png)
+
+- We can see we have a credit of $10.00 in the `OpenAI` dashboard.
+
+![Initial credit added](angular-nestjs-openai-024.png)
+
+- We are going to create a `.env` file in the root of the `api` folder to store the `OpenAI` API key.
+- We need to install `@nestjs/config` to use the `.env` file.
+
+```bash
+yarn add @nestjs/config
+➤ YN0000: · Yarn 4.5.0
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + @nestjs/config@npm:3.2.3, dotenv-expand@npm:10.0.0, dotenv@npm:16.4.5
+➤ YN0000: └ Completed in 0s 235ms
+➤ YN0000: ┌ Post-resolution validation
+➤ YN0002: │ api@workspace:. doesn't provide webpack (pee0a8), requested by ts-loader.
+➤ YN0086: │ Some peer dependencies are incorrectly met by your project; run yarn explain peer-requirements <hash> for details, where <hash> is the six-letter p-prefixed code.
+➤ YN0086: │ Some peer dependencies are incorrectly met by dependencies; run yarn explain peer-requirements for details.
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0013: │ 2 packages were added to the project (+ 73.28 KiB).
+➤ YN0000: └ Completed in 0s 408ms
+➤ YN0000: ┌ Link step
+➤ YN0007: │ @nestjs/core@npm:10.4.4 [7473a] must be built because it never has been before or the last one failed
+➤ YN0000: └ Completed in 0s 715ms
+➤ YN0000: · Done with warnings in 1s 531ms
+```
+
+- We need to modify the `app.module.ts` file to use the `ConfigModule` and the `.env` file.
+
+> api/src/app.module.ts
+
+```typescript
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { GptModule } from './gpt/gpt.module';
+import { ConfigModule } from '@nestjs/config';
+
+@Module({
+  imports: [GptModule, ConfigModule.forRoot()],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+
+#### 4.1.5 Creating the `.env` file
+
+- We need to create a `.env` file in the root of the `api` folder to store the `OpenAI` API key.
+
+> api/.env
+```env
+# https://platform.openai.com/api-keys
+OPENAI_API_KEY=your-openai-api-key
+```
+
+#### 4.1.6 Installing the `openai` package
+
+- We are going to install the `openai` package to interact with the `OpenAI` API.
+
+```bash
+yarn add openai
+➤ YN0000: · Yarn 4.5.0
+➤ YN0000: ┌ Resolution step
+➤ YN0085: │ + openai@npm:4.68.1
+➤ YN0000: └ Completed in 0s 222ms
+➤ YN0000: ┌ Post-resolution validation
+➤ YN0002: │ api@workspace:. doesn't provide webpack (pee0a8), requested by ts-loader.
+➤ YN0086: │ Some peer dependencies are incorrectly met by your project; run yarn explain peer-requirements <hash> for details, where <hash> is the six-letter p-prefixed code.
+➤ YN0086: │ Some peer dependencies are incorrectly met by dependencies; run yarn explain peer-requirements for details.
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+➤ YN0013: │ A package was added to the project (+ 2.77 MiB).
+➤ YN0000: └ Completed in 0s 439ms
+➤ YN0000: ┌ Link step
+➤ YN0000: └ Completed in 0s 485ms
+➤ YN0000: · Done with warnings in 1s 294ms
+```
+
+### 4.1.8 Creating the `OpenAI` service and controller
+
+- We are going to create the first dto to interact with the `OpenAI` API.
+
+> api/src/gpt/dtos/orthography.dto.ts
+```typescript
+import { IsInt, IsOptional, IsString } from 'class-validator';
+
+export class OrthographyDto {
+
+  @IsString()
+  readonly prompt: string
+
+  @IsInt()
+  @IsOptional()
+  readonly maxTokens?: number;
+}
+```
+
+- We are going to create the first Use Case to interact with the `OpenAI` API.
+
+> api/src/gpt/use-cases/orthography.use-case.ts
+```typescript
+import { Logger } from '@nestjs/common';
+import OpenAI from 'openai';
+
+interface Options {
+  prompt: string;
+}
+
+export const orthographyCheckUseCase = async (openai: OpenAI, options: Options) => {
+
+  const logger = new Logger(orthographyCheckUseCase.name);
+
+  const { prompt } = options;
+
+  const completion = await openai.chat.completions.create({
+    messages: [
+      {
+        role: "system",
+        content: `
+        Te serán proveídos textos en español con posibles errores ortográficos y gramaticales,
+        Las palabras usadas deben de existir en el diccionario de la Real Academia Española,
+        Debes de responder en formato JSON, 
+        tu tarea es corregirlos y retornar información soluciones, 
+        también debes de dar un porcentaje de acierto por el usuario,
+        
+        Si no hay errores, debes de retornar un mensaje de felicitaciones.
+
+        Ejemplo de salida:
+        {
+          userScore: number,
+          errors: string[], // ['error -> solución']
+          message: string, //  Usa emojis y texto para felicitar al usuario
+        }
+        `
+      },
+      {
+        role: 'user',
+        content: prompt,
+      }
+    ],
+    // model: "gpt-3.5-turbo-1106",
+    model: "gpt-4o",
+    temperature: 0.3,
+    max_tokens: 150,
+    response_format: {
+      type: 'json_object'
+    }
+  });
+
+  logger.debug(`Completion: ${JSON.stringify(completion)}`);
+  const content = completion.choices[0].message.content;
+  if (content === null) {
+    throw new Error("Completion content is null");
+  }
+  const jsonResp = JSON.parse(content);
+
+  return jsonResp;
+
+}
+```
+
+- We are going to create the service to interact with the `OpenAI` API.
+
+> api/src/gpt/gpt.service.ts
+```typescript
+import { Injectable } from '@nestjs/common';
+import OpenAI from 'openai';
+import { orthographyCheckUseCase } from './use-cases';
+import { OrthographyDto } from './dtos';
+
+@Injectable()
+export class GptService {
+
+  private openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+
+  // Solo va a llamar casos de uso
+  async orthographyCheck(orthographyDto: OrthographyDto) {
+    return await orthographyCheckUseCase(this.openai, {
+      prompt: orthographyDto.prompt
+    });
+  }
+}
+```
+
+- We are going to create the controller to interact with the `OpenAI` API.
+
+> api/src/gpt/gpt.controller.ts
+```typescript
+import { Body, Controller, Post } from '@nestjs/common';
+import { GptService } from './gpt.service';
+import { OrthographyDto } from './dtos';
+
+@Controller('gpt')
+export class GptController {
+
+  constructor(private readonly gptService: GptService) { }
+
+  @Post('orthography-check')
+  orthographyCheck(
+    @Body() orthographyDto: OrthographyDto,
+  ) {
+    return this.gptService.orthographyCheck(orthographyDto);
+  }
+}
+```
+
+- We need to update the `gpt.module.ts` file to include the `GptController` and `GptService`.
+
+> api/src/gpt/gpt.module.ts
+```typescript
+import { Module } from '@nestjs/common';
+import { GptService } from './gpt.service';
+import { GptController } from './gpt.controller';
+
+@Module({
+  controllers: [GptController],
+  providers: [GptService],
+})
+export class GptModule {}
+```
+
+### 4.1.9 Testing the API NestJS project
+
+- We need to install the `REST Client` extension in `VSCode` to test the API.
+- Once we have installed the `REST Client` extension we can create a new file called `gpt.http` in the `api/src/gpt` folder.
+
+
+> api/src/gpt/gpt.http
+```http
+## Local url
+@url = http://localhost:3000/gpt
+
+### Create a new payment intent
+POST {{url}}/orthography-check
+content-type: application/json
+
+{
+  "prompt": "Las casa son mui bonitas"
+}
+```
+
+- If we execute that `POST` request we can see the response from the `OpenAI` API.
+
+```http
+HTTP/1.1 201 Created
+X-Powered-By: Express
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=utf-8
+Content-Length: 152
+ETag: W/"98-MVQZfGr2h0wLhUlrBs9VhJHQ8A4"
+Date: Sun, 20 Oct 2024 18:59:43 GMT
+Connection: close
+
+{
+  "userScore": 66.67,
+  "errors": [
+    "Las casa -> Las casas",
+    "mui -> muy"
+  ],
+  "message": "¡Buen intento! 😊 Sigue practicando para mejorar tu ortografía. 📚"
+}
+```
+
+- We can also see the log on the console:
+
+```txt
+Nest] 44614  - 20/10/2024, 19:59:43   DEBUG [orthographyCheckUseCase] Completion: {"id":"chatcmpl-AKVROvibO5EEQQkZ7hrhrclwhJghv","object":"chat.completion","created":1729450782,"model":"gpt-4o-2024-08-06","choices":[{"index":0,"message":{"role":"assistant","content":"{\n  \"userScore\": 66.67,\n  \"errors\": [\n    \"Las casa -> Las casas\",\n    \"mui -> muy\"\n  ],\n  \"message\": \"¡Buen intento! 😊 Sigue practicando para mejorar tu ortografía. 📚\"\n}","refusal":null},"logprobs":null,"finish_reason":"stop"}],"usage":{"prompt_tokens":151,"completion_tokens":55,"total_tokens":206,"prompt_tokens_details":{"cached_tokens":0},"completion_tokens_details":{"reasoning_tokens":0}},"system_fingerprint":"fp_45c6de4934"}
+```

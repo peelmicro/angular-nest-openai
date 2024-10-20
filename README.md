@@ -5,6 +5,8 @@ OpenAI Course with Angular + NestJS based on the Udemy Course [OpenAI: Ejercicio
 ## Getting Started
 
 - After cloning the repo.
+  - Clone the `template.env` file in the `api` folder and rename it to `.env`.
+    - Update you OpenAI API Key in the `.env` file.
   - Go to `api` folder and execute `yarn` to install the dependencies.
   - Go to `web` folder and execute `yarn` to install the dependencies.
 
