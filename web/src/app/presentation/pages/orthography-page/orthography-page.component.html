@@ -7,7 +7,11 @@
       <!-- <app-my-message text="Hola, ¿cómo estás?" /> -->
       @for (message of messages(); track $index) {
       @if( message.isGpt ) {
-      <app-chat-message [text]="message.text" />
+        <app-gpt-message-ortography 
+          [text]="message.text"
+          [errors]="message.info!.errors"
+          [userScore]="message.info!.userScore"
+        />
       } @else {
       <app-my-message [text]="message.text" />
       }
@@ -17,11 +21,9 @@
       }
     </div>
   </div>
-  <!-- MessageBox -->
-  <!-- <app-text-message-box placeholder="Escribe aquí lo que deseas" (onMessage)="handleMessage($event)" /> -->
-  <!-- <app-text-message-box-file
+  <app-text-message-box
     placeholder="Escribe aquí lo que deseas"
-    (onMessage)="handleMessageWithFile($event)"/> -->
-  <app-text-message-box-select placeholder="Escribe aquí lo que deseas"
-    [options]="[{ id: '1', text: 'Uno' }, { id: '2', text: 'Dos' }]" (onMessage)="handleMessageWithSelect($event)" />
+    (onMessage)="handleMessage($event)"
+    [disableCorrections]="true"
+  />
 </div>

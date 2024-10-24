@@ -1011,6 +1011,9 @@ export const orthographyCheckUseCase = async (openai: OpenAI, options: Options) 
     model: "gpt-4o",
     temperature: 0.3,
     max_tokens: 150,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
     response_format: {
       type: 'json_object'
     }
@@ -1024,7 +1027,6 @@ export const orthographyCheckUseCase = async (openai: OpenAI, options: Options) 
   const jsonResp = JSON.parse(content);
 
   return jsonResp;
-
 }
 ```
 

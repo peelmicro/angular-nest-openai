@@ -40,7 +40,7 @@ export const orthographyCheckUseCase = async (openai: OpenAI, options: Options) 
     // model: "gpt-3.5-turbo-1106",
     model: "gpt-4o",
     temperature: 0.3,
-    max_tokens: 2048,
+    max_tokens: 150,
     top_p: 1,
     frequency_penalty: 0,
     presence_penalty: 0,
@@ -49,7 +49,6 @@ export const orthographyCheckUseCase = async (openai: OpenAI, options: Options) 
     }
   });
 
-  logger.debug(`Completion: ${JSON.stringify(completion)}`);
   const content = completion.choices[0].message.content;
   if (content === null) {
     throw new Error("Completion content is null");

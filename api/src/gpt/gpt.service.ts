@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
-import { orthographyCheckUseCase } from './use-cases';
-import { OrthographyDto } from './dtos';
+import { prosConsDiscusserUseCase, orthographyCheckUseCase, prosConsDicusserStreamUseCase } from './use-cases';
+import { OrthographyDto, ProsConsDiscusserDto } from './dtos';
 
 @Injectable()
 export class GptService {
@@ -16,4 +16,14 @@ export class GptService {
       prompt: orthographyDto.prompt
     });
   }
+
+  async prosConsDicusser(prosConsDiscusserDto: ProsConsDiscusserDto) {
+    return await prosConsDiscusserUseCase(this.openai, {
+      prompt: prosConsDiscusserDto.prompt
+    });
+  }
+
+  async prosConsDicusserStream({ prompt }: ProsConsDiscusserDto ) {
+    return await prosConsDicusserStreamUseCase(this.openai, { prompt });
+  }  
 }

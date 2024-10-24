@@ -1,10 +1,27 @@
 ## Local url
 @url = http://localhost:3000/gpt
 
-### Create a new payment intent
+### Call the Open AI API orthography check use case
 POST {{url}}/orthography-check
 content-type: application/json
 
 {
   "prompt": "Las casa son mui bonitas"
+}
+
+### Call the Open AI API Pros Cons Discusser use case
+POST {{url}}/pros-cons-discusser
+content-type: application/json
+
+{
+  "prompt": "¿Puedes comparar entre un cocher o una moto?"
+}
+
+
+### Call the Open AI API Pros Cons Stream use case
+POST {{url}}/pros-cons-discusser-stream
+content-type: application/json
+
+{
+  "prompt": "¿Puedes comparar entre un cocher o una moto?"
 }
