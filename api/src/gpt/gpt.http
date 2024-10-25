@@ -25,3 +25,12 @@ content-type: application/json
 {
   "prompt": "¿Puedes comparar entre un cocher o una moto?"
 }
+
+### Call the Open AI API translate use case
+POST {{url}}/translate
+content-type: application/json
+
+{
+  "prompt": "Es un placer conocerte, ¿puedes indicarme dónde encuentro la estación de bus más cercana?",
+  "lang": "árabe"
+}

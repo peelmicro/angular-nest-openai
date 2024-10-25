@@ -1,7 +1,7 @@
 import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { GptService } from './gpt.service';
-import { OrthographyDto, ProsConsDiscusserDto } from './dtos';
+import { OrthographyDto, ProsConsDiscusserDto, TranslateDto } from './dtos';
 
 @Controller('gpt')
 export class GptController {
@@ -42,7 +42,6 @@ export class GptController {
         res.write(piece);
       }
 
-      // res.write('data: [DONE]\n\n');
       res.end();
     } catch (error) {
       console.error('Streaming error:', error);
@@ -51,4 +50,11 @@ export class GptController {
       });
     }
   }
+
+  @Post('translate')
+  translateText(
+    @Body() translateDto: TranslateDto,
+  ) {
+    return this.gptService.translateText(translateDto);
+  }  
 }
