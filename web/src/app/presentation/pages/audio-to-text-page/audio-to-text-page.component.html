@@ -1,1 +1,35 @@
-<p>audio-to-text-page works!</p>
+<div class="chat-container">
+  <div class="chat-messages">
+
+    <div class="grid gap-y-2">
+
+      <!-- Chat Messages -->
+      <app-chat-message
+        text="Escribe el prompt que quieres que utilice y adjunta el audio que quieras transcribir."
+      />
+
+      @for (message of messages(); track $index) {
+        @if( message.isGpt ) {
+          <app-chat-message [text]="message.text"/>
+        } @else {
+          <app-my-message [text]="message.text"
+          />
+        }
+      }
+
+      @if (isLoading()) {
+        <app-typing-loader />
+      }
+
+    </div>
+  </div>
+
+  <!-- MessageBox -->
+  <app-text-message-box-file
+    placeholder="Escribe el prompt que quieres que utilice."
+    (onMessage)="handleMessageWithFile($event)"
+  />
+
+
+
+</div>

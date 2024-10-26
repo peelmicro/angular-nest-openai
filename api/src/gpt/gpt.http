@@ -46,3 +46,19 @@ content-type: application/json
 
 ### Get an audio already generated
 GET {{url}}/text-to-audio/1729919179808
+
+
+### Call the Open AI API audio to text use case
+POST {{url}}/audio-to-text
+Content-Type: multipart/form-data; boundary=MfnBoundry
+
+--MfnBoundry
+Content-Disposition: form-data; name="file"; filename="ElParque.m4a"
+Content-Type: audio/m4a
+
+< ./ElParque.m4a
+--MfnBoundry
+Content-Disposition: form-data; name="prompt"
+
+mantén todos los signos de puntuación y humms... y ahs...
+--MfnBoundry--
