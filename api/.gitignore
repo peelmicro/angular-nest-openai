@@ -5,6 +5,10 @@ node_modules/
 dist/
 .env
 
+# Exclude generated files
+/generated/*
+!/generated/.gitkeep
+
 # IDE
 /.idea
 /.awcache

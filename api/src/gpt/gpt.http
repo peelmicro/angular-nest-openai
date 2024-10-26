@@ -34,3 +34,15 @@ content-type: application/json
   "prompt": "Es un placer conocerte, ¿puedes indicarme dónde encuentro la estación de bus más cercana?",
   "lang": "árabe"
 }
+
+### Call the Open AI API text to audio use case
+POST {{url}}/text-to-audio
+content-type: application/json
+
+{
+  "prompt": "Mi nombre es Juan Pablo Perez",
+  "voice": "alloy"
+}
+
+### Get an audio already generated
+GET {{url}}/text-to-audio/1729919179808
