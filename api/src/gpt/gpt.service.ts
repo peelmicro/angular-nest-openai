@@ -1,7 +1,24 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import OpenAI from 'openai';
-import { prosConsDiscusserUseCase, orthographyCheckUseCase, prosConsDicusserStreamUseCase, translateUseCase, textToAudioUseCase, audioToTextUseCase } from './use-cases';
-import { AudioToTextDto, OrthographyDto, ProsConsDiscusserDto, TextToAudioDto, TranslateDto } from './dtos';
+import { 
+  prosConsDiscusserUseCase, 
+  orthographyCheckUseCase, 
+  prosConsDicusserStreamUseCase, 
+  translateUseCase, 
+  textToAudioUseCase, 
+  audioToTextUseCase,
+  imageGenerationUseCase,
+  imageVariationUseCase,  
+} from './use-cases';
+import { 
+  AudioToTextDto, 
+  OrthographyDto, 
+  ProsConsDiscusserDto, 
+  TextToAudioDto, 
+  TranslateDto,
+  ImageGenerationDto,
+  ImageVariationDto,  
+ } from './dtos';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -25,7 +42,7 @@ export class GptService {
     });
   }
 
-  async prosConsDicusserStream({ prompt }: ProsConsDiscusserDto ) {
+  async prosConsDicusserStream({ prompt }: ProsConsDiscusserDto) {
     return await prosConsDicusserStreamUseCase(this.openai, { prompt });
   }
 
@@ -54,9 +71,29 @@ export class GptService {
     return filePath;
   }
 
-  async audioToText( audioFile: Express.Multer.File, audioToTextDto?: AudioToTextDto ) {
+  async audioToText(audioFile: Express.Multer.File, audioToTextDto?: AudioToTextDto) {
     const { prompt } = audioToTextDto as AudioToTextDto;
-    return await audioToTextUseCase( this.openai, { audioFile, prompt } );
-  }  
+    return await audioToTextUseCase(this.openai, { audioFile, prompt });
+  }
+
+  async imageGeneration(imageGenerationDto: ImageGenerationDto) {
+    return await imageGenerationUseCase(this.openai, { ...imageGenerationDto });
+  }
+
+  getGeneratedImage(fileName: string) {
+
+    const filePath = path.resolve('./', './generated/images/', fileName);
+    const exists = fs.existsSync(filePath);
+
+    if (!exists) {
+      throw new NotFoundException('File not found');
+    }
+
+    return filePath;
+  }
+
+  async geneateImageVariation({ baseImage }: ImageVariationDto) {
+    return imageVariationUseCase(this.openai, { baseImage });
+  }
 
 }

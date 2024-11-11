@@ -62,3 +62,22 @@ Content-Disposition: form-data; name="prompt"
 
 mantén todos los signos de puntuación y humms... y ahs...
 --MfnBoundry--
+
+### Call the Open AI API image generation use case
+POST {{url}}/image-generation
+content-type: application/json
+
+{
+  "prompt": "Necesito generar una imagen el estadio metropolitano del atlético de madrid con el público celebrando un gol"
+}
+
+### Get an image already generated
+GET {{url}}/image-generation/1731301499804.png
+
+### Call the Open AI API image variation use case
+POST {{url}}/image-variation
+content-type: application/json
+
+{
+  "baseImage": "http://localhost:3000/gpt/image-generation/1731304641822.png"
+}
