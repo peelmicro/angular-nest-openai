@@ -73,7 +73,7 @@ export class GptMessageEditableImageComponent implements AfterViewInit {
     const canvasWidth = canvasRef.width;
     const canvasHeight = canvasRef.height;
 
-    //TODO: Limpiar el canvar
+    //TODO: Limpiar el canvas
     const ctx = canvasRef.getContext('2d')!;
     ctx.clearRect(0,0, canvasWidth, canvasHeight );
     ctx.drawImage( this.originalImage()!, 0,0, canvasWidth, canvasHeight );
