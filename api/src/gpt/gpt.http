@@ -81,3 +81,18 @@ content-type: application/json
 {
   "baseImage": "http://localhost:3000/gpt/image-generation/1731304641822.png"
 }
+
+### Call the Open AI API audio to text use case
+POST {{url}}/extract-text-from-image
+Content-Type: multipart/form-data; boundary=MfnBoundry
+
+--MfnBoundry
+Content-Disposition: form-data; name="file"; filename="dogs-9172481_1280.jpg"
+Content-Type: image/*
+
+< ./dogs-9172481_1280.jpg
+--MfnBoundry
+Content-Disposition: form-data; name="prompt"
+
+describe la imagen
+--MfnBoundry--
