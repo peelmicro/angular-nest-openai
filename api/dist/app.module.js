@@ -12,12 +12,17 @@ const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const gpt_module_1 = require("./gpt/gpt.module");
 const config_1 = require("@nestjs/config");
+const sam_assistant_module_1 = require("./sam-assistant/sam-assistant.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [gpt_module_1.GptModule, config_1.ConfigModule.forRoot()],
+        imports: [
+            gpt_module_1.GptModule,
+            config_1.ConfigModule.forRoot(),
+            sam_assistant_module_1.SamAssistantModule,
+        ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })

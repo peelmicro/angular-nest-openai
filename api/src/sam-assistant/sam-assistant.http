@@ -1,0 +1,14 @@
+## Local url
+@url = http://localhost:3000/sam-assistant
+
+### Call the Open AI API Create Thread check use case
+POST {{url}}/create-thread
+
+### Call the Open AI API User Question check use case
+POST {{url}}/user-question
+content-type: application/json
+
+{
+  "threadId": "thread_6AqE29B24SLJ2X5Kw6NuPFUo",
+  "question": "Cuántos años tiene la garantía de un producto?"
+}
